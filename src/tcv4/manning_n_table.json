@@ -1,0 +1,134 @@
+{
+ "source": "Chow (1959), via https://www.fsl.orst.edu/geowater/FX3/help/8_Hydraulic_Reference/Mannings_n_Tables.htm",
+ "note": "international table, not Taiwan code; [min, normal, max]",
+ "mountain_stream": {
+  "gravel_cobbles_few_boulders": [
+   0.03,
+   0.04,
+   0.05
+  ],
+  "cobbles_large_boulders": [
+   0.04,
+   0.05,
+   0.07
+  ]
+ },
+ "concrete": {
+  "trowel": [
+   0.011,
+   0.013,
+   0.015
+  ],
+  "float": [
+   0.013,
+   0.015,
+   0.016
+  ],
+  "gunite_good": [
+   0.016,
+   0.019,
+   0.023
+  ],
+  "gunite_wavy": [
+   0.018,
+   0.022,
+   0.025
+  ]
+ },
+ "masonry": {
+  "cemented_rubble": [
+   0.017,
+   0.025,
+   0.03
+  ],
+  "dry_rubble": [
+   0.023,
+   0.032,
+   0.035
+  ]
+ },
+ "floodplain": {
+  "pasture_short": [
+   0.025,
+   0.03,
+   0.035
+  ],
+  "pasture_high": [
+   0.03,
+   0.035,
+   0.05
+  ],
+  "brush_scattered_weeds": [
+   0.035,
+   0.05,
+   0.07
+  ],
+  "brush_dense_summer": [
+   0.07,
+   0.1,
+   0.16
+  ],
+  "trees_cleared_stumps": [
+   0.03,
+   0.04,
+   0.05
+  ],
+  "trees_heavy_timber": [
+   0.08,
+   0.1,
+   0.12
+  ],
+  "willows_dense_summer": [
+   0.11,
+   0.15,
+   0.2
+  ]
+ },
+ "excavated_earth": {
+  "clean_straight_new": [
+   0.016,
+   0.018,
+   0.02
+  ],
+  "clean_straight_weathered": [
+   0.018,
+   0.022,
+   0.025
+  ],
+  "gravel_uniform": [
+   0.022,
+   0.025,
+   0.03
+  ],
+  "short_grass_few_weeds": [
+   0.022,
+   0.027,
+   0.033
+  ]
+ },
+ "riprap": {
+  "concrete_bottom_dry_rubble_sides": [
+   0.02,
+   0.03,
+   0.035
+  ],
+  "gravel_bottom_dry_rubble_sides": [
+   0.023,
+   0.033,
+   0.036
+  ]
+ },
+ "project_defaults": {
+  "main_channel": 0.04,
+  "overbank": 0.05,
+  "rc_drain": 0.015,
+  "u_drain": 0.013,
+  "trap_masonry_drain": 0.025,
+  "revetment": {
+   "concrete": 0.015,
+   "masonry": 0.025,
+   "gabion": 0.032
+  },
+  "note": "revetment n auto by type, user can override"
+ }
+}

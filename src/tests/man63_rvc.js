@@ -1,0 +1,11 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1600,height:1000}});pg.on('dialog',d=>d.accept());
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
+await pg.evaluate(()=>{rvAdd('L',0,167,'bty');rvAdd('R',0,167,'grav');});await pg.waitForTimeout(3000);
+await pg.evaluate(()=>{const k=state.sections.findIndex(s=>s.sta>=80);selectStationIndex(k);setViewMode('2D');switchSideTab('tab-earth',document.querySelector('.panel-tab[data-tab="tab-earth"]'));earthShowGroup(5);state.rvSel=1;rvCpAdd();rvRenderUI();earthCards().forEach(c=>c.classList.remove('folded'));});await pg.waitForTimeout(1500);
+await pg.evaluate(()=>{const el=[...document.querySelectorAll('#tab-earth div')].find(x=>x.children.length<3&&/^控制點/.test(x.textContent.trim()));if(el)el.scrollIntoView({block:'center'});});await pg.waitForTimeout(600);
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/man63'+'/09b_rev_cp.png',clip:{x:0,y:100,width:478,height:900}});
+await pg.evaluate(()=>{const g=getPointAndNormalAtStation(80);state.cam2D.cx=g.x;state.cam2D.cy=g.y;state.cam2D.scale=6;requestRedraw()});await pg.waitForTimeout(800);
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/man63'+'/09f_rev_plan.png',clip:{x:480,y:110,width:1120,height:850}});
+await b.close()})();

@@ -1,0 +1,13 @@
+const {chromium}=require('playwright');const fs=require('fs');
+(async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p3'+'/u.tcproj','utf8'));await pg.waitForTimeout(3000);
+const t0=Date.now();
+await pg.evaluate(()=>{setViewMode('2D');const q=getPointAndNormalAtStation(170);state.cam2D.cx=q.x;state.cam2D.cy=q.y;state.cam2D.scale=5;requestRedraw()});await pg.waitForTimeout(1500);
+const perf=await pg.evaluate(()=>{const t=performance.now();for(let i=0;i<5;i++)render2DCAD();return (performance.now()-t)/5});
+console.log('render ms',perf.toFixed(0), JSON.stringify(await pg.evaluate(()=>state.staTick)));
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p3'+'/s1.png',clip:{x:480,y:110,width:1220,height:830}});
+await pg.evaluate(()=>{state.cam2D.scale=2.2;requestRedraw()});await pg.waitForTimeout(1000);
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p3'+'/s1b.png',clip:{x:480,y:110,width:1220,height:830}});
+const d=await pg.evaluate(()=>buildFullDXF().length);console.log('dxf',d);
+console.log(errs.join('\n')||'noerr');await b.close();})();

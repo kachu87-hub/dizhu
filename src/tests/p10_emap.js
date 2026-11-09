@@ -1,0 +1,36 @@
+// v8.4：K1 CLASSES、K2 .scr、K4 手動數值；v7.7：J1 影像相對路徑 .\＋RASTERVARIABLES、J2 影像與位置圖同編號（DZ-02_LOC_EMAP.png）、J5 字高；v7.2：位置圖套國土測繪中心底圖（以本機假圖磚模擬 WMTS）、IMAGE 寫入 R2000、定位檔；抓不到時退回空白圖框；橫斷面樁號/挖填方/比例 1/300/總寬尺寸
+const {chromium}=require('playwright');const fs=require('fs');
+(async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1600,height:1000}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>{errs.push('dialog '+d.message());d.accept()});
+const fail=m=>errs.push('FAIL '+m);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/home/claude/u.tcproj','utf8'));await pg.waitForTimeout(3000);
+const r=await pg.evaluate(async()=>{const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');x.fillStyle='#cde';x.fillRect(0,0,256,256);x.strokeStyle='#f00';x.strokeRect(0,0,256,256);const tile=c.toDataURL('image/png');
+  const P=pkgNorm(state.pkg);const out={def:[P.locMap,P.secS,P.secPt]};
+  const M=await lyEmapFetch(P,{url:()=>tile,timeout:3000});out.m=M&&{ok:M.ok,z:M.z,tiles:M.tiles,got:M.got,px:M.img.px,py:M.img.py,files:M.files.map(f=>f.name),pgw:M.files[1].data.split('\r\n').slice(0,6)};
+  pkgMake({parts:{merged:true}});const R=pkgMake({parts:{merged:true}});const loc=R.sheets.find(s=>s.kind==='loc');const f=R.files.find(f=>f.name.startsWith(loc.lay)).data;
+  out.loc=[/\n0\nIMAGE\n/.test(f),/\nIMAGEDEF\n/.test(f),/\nIMAGEDEF_REACTOR\n/.test(f),/ACAD_IMAGE_DICT/.test(f),/\n1\n\.\\DZ-02_LOC_EMAP\.png\n/.test(f)&&/RASTERVARIABLES/.test(f)];
+  out.merged=/\n0\nIMAGE\n/.test(R.files.find(f=>/全部圖紙/.test(f.name)).data);
+  out.cls=[/\n0\nSECTION\n2\nCLASSES\n[\s\S]*\n1\nIMAGE\n2\nAcDbRasterImage\n3\nISM\n90\n2175\n[\s\S]*RASTERVARIABLES[\s\S]*\n0\nENDSEC\n0\nSECTION\n2\nTABLES/.test(f),/\n2\nCLASSES\n/.test(R.files.find(f=>/^DZ-0[3-9]/.test(f.name)&&/\.dxf$/.test(f.name)).data)];
+  const sc=R.files.find(f=>/^DZ-02_LOC_EMAP\.scr$/.test(f.name));out.scr=sc&&sc.data.split('\r\n');out.man=/IMAGEATTACH 選 DZ-02_LOC_EMAP\.png，插入點 X=/.test(R.files.find(f=>f.name==='出圖說明.txt').data);
+  out.zipHas=R.files.filter(f=>/^LOC_/.test(f.name)||/_LOC_/.test(f.name)).map(f=>f.name);out.note=/底圖＝內政部國土測繪中心/.test(R.files.find(f=>f.name==='出圖說明.txt').data);
+  window.LY_EMAP=null;await lyEmapFetch(P,{url:()=>'data:image/png;base64,xx',timeout:2000});out.bad=window.LY_EMAP&&[window.LY_EMAP.ok,window.LY_EMAP.why];
+  const R2=pkgMake();out.blank=!R2.files.some(f=>/^LOC_/.test(f.name)||/_LOC_/.test(f.name))&&/底圖未套/.test(R2.files.find(f=>f.name==='出圖說明.txt').data);window.LY_EMAP=null;
+  // 橫斷面
+  const dec=s=>s.replace(/\\U\+([0-9A-F]{4})/g,(m,h)=>String.fromCharCode(parseInt(h,16)));
+  const sec=R2.sheets.filter(s=>s.kind==='sec');out.secScale=[...new Set(sec.map(s=>s.scale))];out.nSec=sec.length;
+  const t=dec(R2.files.find(f=>f.name.startsWith(sec[0].lay)).data);out.vol=/挖方：\d+\.\d\dm3/.test(t)&&/填方：\d+\.\d\dm3/.test(t);
+  out.pt=state.sections.filter(s=>s.ptName).length;const names=[...new Set(state.sections.filter(s=>s.ptName).map(s=>s.ptName))];
+  const all=R2.sheets.filter(s=>s.kind==='sec').map(s=>dec(R2.files.find(f=>f.name.startsWith(s.lay)).data)).join('');out.ptIn=names.filter(n=>new RegExp('\\d '+n+'\\n').test(all)).length;
+  out.qi=/－起/.test(all);
+  return out;});
+if(r.def.join()!=='EMAP,300,false')fail('預設 '+r.def);
+if(!r.m||!r.m.ok||r.m.got!==r.m.tiles||r.m.px<500)fail('底圖 '+JSON.stringify(r.m));
+if(r.loc.some(x=>!x))fail('位置圖 IMAGE '+r.loc);if(!r.merged)fail('合併檔無 IMAGE');
+if(!/^DZ-02_LOC_EMAP\.png,DZ-02_LOC_EMAP\.pgw,DZ-02_LOC_EMAP\.scr$/.test(r.zipHas.join()))fail('檔案 '+r.zipHas);if(!r.note)fail('說明');
+if(!r.cls[0]||r.cls[1])fail('CLASSES 只在有影像的檔案宣告 '+r.cls);
+if(!r.scr||r.scr[6]!=='-IMAGE'||!/^\(strcat \(getvar "DWGPREFIX"\) "DZ-02_LOC_EMAP\.png"\)$/.test(r.scr[8])||!/^[\d.]+,[\d.]+$/.test(r.scr[9])||!(+r.scr[10]>1000))fail('指令稿 '+JSON.stringify(r.scr));
+if(!r.man)fail('手動插入數值');
+if(!r.bad||r.bad[0]!==false||!r.blank)fail('抓不到時應退回空白 '+JSON.stringify(r.bad)+r.blank);
+if(r.secScale.some(s=>s!=='1/300'&&!/1\/(400|500|600|800|1000)/.test(s)))fail('橫斷面比例 '+r.secScale);
+if(!r.vol)fail('挖填方');if(r.pt&&r.ptIn)fail('預設不應寫點名 '+r.ptIn);if(!r.qi)fail('護岸起點 －起');
+console.log(JSON.stringify(r));console.log(errs.join('\n')||'noerr');await b.close();})();

@@ -1,0 +1,31 @@
+// v8.0：護坡基礎補強（附護岸牆腳；無護岸＝設計河寬邊線）
+const {chromium}=require('playwright');const fs=require('fs');const OUT='/home/claude/prev/shots/';try{fs.mkdirSync(OUT,{recursive:true});}catch(e){}
+(async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
+const fail=m=>errs.push('FAIL '+m);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
+await pg.evaluate(()=>{rvAdd('L',0,100,'grav');});await pg.waitForTimeout(2500);
+const r=await pg.evaluate(()=>{const o={};const i=state.sections.findIndex(s=>s.sta>=40);state.selectedStaIdx=i;tfrAdd('L');tfrAdd('R');const [a,c]=state.tfrs;
+ const U=tfrUnits(a);o.n=U.n;o.units=U.units.map(u=>[+u.a.toFixed(2),+u.b.toFixed(2)]);o.rows=tfrRows(a);o.srcL=tfrBase('L',U.units[0].a).src;o.srcR=tfrBase('R',U.units[0].a).src;
+ const Q=tfrPlanPolys(a);o.cells=Q.items[0].cells.length;
+ const sec=state.sections.find(s=>U.units.some(u=>s.sta>=u.a&&s.sta<=u.b));o.secHit=sec?tfrSecItems(sec).length:-1;
+ o.sheet=tfrSheet().rows.length;const B=stQtyBook();o.book=B.sheets.map(s=>s.name).includes('護坡基礎補強');
+ const W=ttWorks(false);o.tt=W.filter(w=>w.cat==='護坡基礎補強').length;
+ o.std=tfrStdPrims(a).P.length;o.dxf=buildFullDXF().length;o.dxfHas=buildFullDXF().includes('TFR_FRAME');
+ o.cat=catItems().some(x=>x.id==='tfr:1');
+ tfrSet('mode','n');tfrSet('n',2);o.n2=tfrUnits(state.tfrs[1]).n;
+ const P=collectProject();const js=JSON.stringify(P);o.saved=P.data.tfr.list.length;
+ state.tfrs=[];applyProject(JSON.parse(js),'x');o.loaded=state.tfrs.length;
+ pushUndoSnapshot();state.tfrs=[];undoLastAction();o.undo=state.tfrs.length;
+ o.html=(document.getElementById('tfrBox')||{}).innerHTML?.length||0;o.open=!!document.querySelector('#tfrBox details[open]');
+ return o;});
+console.log(JSON.stringify(r));
+if(!(r.n>=3&&r.cells===2&&r.secHit===2&&r.srcL==='rv'&&r.srcR==='des'&&r.book&&r.tt===2&&r.std>100&&r.dxfHas&&r.cat&&r.n2===2&&r.saved===2&&r.loaded===2&&r.undo===2&&r.html>500))fail('tfr '+JSON.stringify(r));
+if(Math.abs(r.rows[0].v-16.58*r.n)>0.05)fail('conc');
+if(Math.abs(r.rows[3].v-42.32*r.n)>0.05)fail('stone '+r.rows[3].v);
+const ex=r.rows.find(x=>x.it==='基礎開挖'),bf=r.rows.find(x=>x.it==='基礎回填');console.log('ex',ex&&ex.v,'bf',bf&&bf.v);if(!ex||!bf||!(ex.v>0)||!(bf.v>=0)||bf.v>=ex.v)fail('exbf');
+await pg.evaluate(()=>{setViewMode('2D');const q=getPointAndNormalAtStation(50);state.cam2D.cx=q.x;state.cam2D.cy=q.y;state.cam2D.scale=8;requestRedraw();});await pg.waitForTimeout(800);
+await pg.screenshot({path:OUT+'tfr_plan.png'});
+await pg.evaluate(()=>{const U=tfrUnits(state.tfrs[0]);const i=state.sections.findIndex(s=>s.sta>=U.units[0].a&&s.sta<=U.units[0].b);state.selectedStaIdx=i;setViewMode('CROSS');requestRedraw();});await pg.waitForTimeout(800);
+await pg.screenshot({path:OUT+'tfr_cross.png'});
+console.log(errs.join('\n')||'noerr');await b.close();})();

@@ -1,0 +1,15 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1600,height:1000}});pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
+await pg.evaluate(()=>{rvAdd('L',0,167,'grav');rvAdd('R',0,167,'grav');stAdd(30,'sill');stAdd(70,'sill');});await pg.waitForTimeout(2500);
+const r=await pg.evaluate(()=>{const o=[];state.structSel=0;sltSetType('cdam');state.structSel=1;sltSetType('f0605');
+ const st=state.structs[1]; sltSetLR('eq',{checked:false}); sltSetLR('right',{value:'3,2,1'}); o.push(JSON.stringify(sltRun(st).P.layerLR), st.p.wsp, st.w.L.wh, st.w.R.wh, st.p.w);
+ sltSetLR('eq',{checked:true}); o.push(JSON.stringify(sltRun(st).P.layerLR), st.w.L.wh, st.w.R.wh);
+ sltSet('p_N_layer',{value:'5'}); o.push(JSON.stringify(sltRun(st).P.layerLR));
+ sltFitW(); o.push(JSON.stringify(sltRun(st).P.layerLR));
+ const h=sltParamHTML(st); o.push(h.length, /各層左格數/.test(h));
+ state.structSel=0; sltFitW(); o.push(sltRun(state.structs[0]).P.W_wing_L, sltRun(state.structs[0]).P.W_total, JSON.stringify(stQty(state.structs[0]).rows.map(r=>[r.it.slice(0,8),+r.v.toFixed(2)])), state.structs[0].w.L.wh, state.structs[0].w.R.wh);
+ const d=buildFullDXF(); o.push(d.length); o.push(JSON.stringify(stQty(st).rows.map(r=>[r.it.slice(0,10),+r.v.toFixed(2)])));
+ return o;});
+console.log(r.join('\n'));console.log(errs.join('\n')||'noerr');await b.close();})();

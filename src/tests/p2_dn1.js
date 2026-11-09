@@ -1,0 +1,14 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100},deviceScaleFactor:1.5});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
+const T=process.argv[2]||'dry';
+const r=await pg.evaluate((T)=>{state.dnPickType=T;dnAdd('A');const d=state.dns[state.dns.length-1];Object.assign(d,{s0:20,s1:80,side:'L',e:9});d.type=T;d.p=Object.assign({},DN_TYPES[T].p);d._k=null;d.q=0.3;
+ const S=dnSec(d),c=dnCalc(d),rows=dnRows(d),h=dnHydCheck(d);dnPanelUI();
+ return {S:[S.A.toFixed(4),S.Wb,S.Wt,S.zb,S.H,S.B,S.m],rows:rows.map(r=>[r.it,+r.v.toFixed(3)]),hyd:h&&[h.n,+h.h.toFixed(3),+h.V1.toFixed(2),h.msg.join('|')],dxf:buildFullDXF().length,tt:(typeof ttWorks==='function')?ttWorks().filter(w=>w.cat==='排水溝'||/排水/.test(w.cat)).length:null,thumb:!!catThumb(catItems().find(i=>i.id==='dn:'+T))}},T);
+console.log(JSON.stringify(r));
+await pg.evaluate(()=>{state.dnSel=state.dns.length-1;dn2StdOpen()});await pg.waitForTimeout(1500);
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/dn_'+T+'_std.png'});
+await pg.evaluate(()=>{document.querySelectorAll('button').forEach(b=>{if(/關閉/.test(b.textContent)&&b.offsetParent)b.click()});const k=state.sections.findIndex(s=>s.sta>=50);selectStationIndex(k);setViewMode('CROSS');setCrossDisplayMode('SINGLE')});await pg.waitForTimeout(1200);
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/dn_'+T+'_cross.png',clip:{x:480,y:110,width:1220,height:830}});
+console.log(errs.join('\n')||'noerr');await b.close();})();

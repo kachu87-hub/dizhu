@@ -1,0 +1,15 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('console',m=>{if(m.type()==='error'&&!/ERR_TUNNEL|Failed to load/.test(m.text()))errs.push('console '+m.text())});pg.on('dialog',d=>d.accept());
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
+const r=await pg.evaluate(()=>{rvAdd('L',0,80,'grav');rvAdd('R',20,120,'b403');stAdd(100,'dam');stAdd(140,'sill');sltSetType('r0607');
+ const i=state.sections.findIndex(s=>s.sta>=40);selectStationIndex(i);bioAdd('L');grdAdd('cl');grdSet('s1','70');rebuildAlignmentAndSections();rvRecalc();
+ const B=ttBuild();return {works:B.W.map(ttWorkLine),mats:B.M.map(m=>[m.it,m.u,+m.v.toFixed(2),!!m.def,!!m.est]),earth:B.E.map(m=>[m.it,+m.v.toFixed(1)]),ex:B.ex.toFixed(1),bf:B.bf.toFixed(1),sheets:stQtyBook().sheets.map(s=>s.name),btn:!!document.getElementById('btnTT')}});
+console.log(JSON.stringify(r,null,1));
+await pg.evaluate(()=>{setViewMode('2D');const q=getPointAndNormalAtStation(80);state.cam2D.cx=q.x;state.cam2D.cy=q.y;state.cam2D.scale=4;requestRedraw()});await pg.waitForTimeout(1200);
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/tt_plan.png',clip:{x:480,y:110,width:1220,height:830}});
+await pg.evaluate(()=>{ttOpen();TT_TAB=1;ttRender()});await pg.waitForTimeout(400);await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/tt_mat.png'});
+await pg.evaluate(()=>{TT_TAB=0;ttRender()});await pg.waitForTimeout(300);await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/tt_types.png'});
+await pg.evaluate(()=>{TT_TAB=2;ttRender()});await pg.waitForTimeout(300);await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/tt_earth.png'});
+const dx=await pg.evaluate(()=>{ttClose();const d=buildFullDXF();return [d.length,(d.match(/WORK_TABLE/g)||[]).length]});console.log(JSON.stringify(dx));
+console.log(errs.join('\n')||'noerr');await b.close();})();

@@ -1,0 +1,12 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100},deviceScaleFactor:2});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
+await pg.evaluate(()=>{rvAdd('L',0,167,'grav');});await pg.waitForTimeout(2000);
+const r=await pg.evaluate(()=>{const i=state.sections.findIndex(s=>s.sta>=40);selectStationIndex(i);bioAdd('L');const f=bioAll()[0];const g=bioGeo(f.rv,f.b);const RB=bioRebar(g,f.b);
+ const sh=bioSheet();const T=(typeof ttWorks==='function')?ttWorks():null;
+ return {rb:RB.R.map(q=>[q.part,q.role,q.bar,q.nb,+q.L.toFixed(1),+q.kg.toFixed(1)]),tot:+RB.tot.toFixed(1),sheet:sh.rows.filter(r=>/鋼筋/.test(String(r[3]&&r[3].v||r[3]))).map(r=>[r[3],r[4]]),tt:T?JSON.stringify(T).match(/鋼筋[^"]*"[^}]{0,80}/g):null}});
+console.log(JSON.stringify(r));
+await pg.evaluate(()=>{BIO_SEL=bioAll()[0].b.id;bioStdOpen()});await pg.waitForTimeout(1500);
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/bio4_std.png'});
+console.log(errs.join('\n')||'noerr');await b.close();})();

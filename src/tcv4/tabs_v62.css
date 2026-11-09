@@ -1,0 +1,17 @@
+
+  /* v6.2 頁籤：線條圖示＋邊框按鈕，選取＝實心底色白字，每列 4 個等寬 */
+  .panel-tabs { gap:5px; padding:8px; border-bottom:1px solid var(--border-dim); }
+  .panel-tab { display:flex !important; flex-direction:column; align-items:center; justify-content:center; gap:3px; min-height:46px; padding:6px 2px !important; border:1px solid var(--border-dim); border-radius:7px; background:var(--bg-panel-alt, rgba(255,255,255,.04)); color:var(--text-muted); font-size:11.5px; line-height:1.2; white-space:normal !important; text-overflow:clip !important; border-bottom-width:1px !important; transition:background .12s,border-color .12s; }
+  .panel-tab::before { content:''; width:18px; height:18px; background:currentColor; -webkit-mask:var(--ti) center/contain no-repeat; mask:var(--ti) center/contain no-repeat; }
+  .panel-tab:hover { color:#fff; border-color:#0e7490; background:rgba(14,116,144,.25); }
+  .panel-tab.active { background:#0e7490 !important; border-color:#0e7490 !important; color:#fff !important; font-weight:700; box-shadow:0 1px 3px rgba(14,116,144,.5); }
+  #earthSubTabs button.st { border-radius:6px; padding:7px 2px; }
+  #earthSubTabs button.st:hover { color:#fff; border-color:#0e7490; background:rgba(14,116,144,.25); }
+  #earthSubTabs button.st.on { background:#0e7490; border-color:#0e7490; color:#fff; }
+  .panel-tab[data-tab="tab-data"] { --ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12m0 0l-4-4m4 4l4-4M4 17v3h16v-3'/%3E%3C/svg%3E"); }
+  .panel-tab[data-tab="tab-align"] { --ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 20L20 3M3 20h5M3 20v-5M14 9l3 3'/%3E%3C/svg%3E"); }
+  .panel-tab[data-tab="tab-tin"] { --ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5M3 17.5l9 5 9-5'/%3E%3C/svg%3E"); }
+  .panel-tab[data-tab="tab-earth"] { --ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6'/%3E%3C/svg%3E"); }
+  .panel-tab[data-tab="tab-dz"] { --ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 20l6-11 4 6 3-4 7 9z'/%3E%3C/svg%3E"); }
+  .panel-tab[data-tab="tab-dn"] { --ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8h18v8H3zM3 12h18M8 8v8'/%3E%3C/svg%3E"); }
+  .panel-tab[data-tab="tab-hy"] { --ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 9c3-3 5 3 8 0s5 3 8 0 3 0 4 0M2 15c3-3 5 3 8 0s5 3 8 0 3 0 4 0'/%3E%3C/svg%3E"); }

@@ -1,0 +1,10 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
+const r=await pg.evaluate(()=>{const A=state.axisNodes[0],B=state.axisNodes[3];ACL.A={x:A.x,y:A.y};ACL.B={x:B.x+40,y:B.y-10};const out=[];
+ [[0,0,0],[20,8,0],[20,8,3],[40,15,0]].forEach(([g,a,t])=>{ACL.p.gap=g;ACL.p.ang=a;ACL.p.tgt=t;aclRun();out.push([g,a,t,ACL.res.ips.length-2,+ACL.res.dev.toFixed(1)]);});
+ ACL.p.gap=20;ACL.p.ang=8;ACL.p.tgt=0;aclRun();const n=ACL.res.ips.length;if(n>2)aclDelIP(1);out.push(['del',n,ACL.res.ips.length,+ACL.res.dev.toFixed(1)]);
+ setViewMode('2D');state.cam2D.cx=250100;state.cam2D.cy=2680060;state.cam2D.scale=6;requestRedraw();return out});
+console.log(JSON.stringify(r));await pg.waitForTimeout(600);await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/acl4.png',clip:{x:480,y:110,width:1220,height:830}});
+console.log(errs.join('\n')||'noerr');await b.close();})();

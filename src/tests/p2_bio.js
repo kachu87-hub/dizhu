@@ -1,0 +1,18 @@
+const {chromium}=require('playwright');const fs=require('fs');
+(async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
+await pg.evaluate(()=>{rvAdd('L',0,167,'grav');rvAdd('R',0,167,'grav');});await pg.waitForTimeout(2500);
+const r=await pg.evaluate(()=>{const o=[]; const i=state.sections.findIndex(s=>s.sta>=40); selectStationIndex(i); bioAdd('L'); bioSet('p.k_slope',2); const f=bioAll()[0]; const g=bioGeo(f.rv,f.b); o.push(JSON.stringify([g.a,g.b,g.H,g.Hn,g.Lr,g.conc,g.form,g.brk]));
+ o.push(JSON.stringify(rvPiecesInfo(f.rv).map(p=>[p.a,p.b]))); const P=rvPlanLines(f.rv,1); o.push(P.pieces.map(p=>[p.a.toFixed(2),p.b.toFixed(2)]).join(' | '));
+ o.push(state.sections.filter(s=>s.sta>g.a-0.01&&s.sta<g.b+0.01).map(s=>s.sta.toFixed(2)).join(','));
+ bioSet('dir','-1'); bioSet('side','R'); o.push(JSON.stringify(bioAll().map(x=>[x.rv.side,x.b.dir,x.b.sta])));
+ const S0=bioStdPrims(bioAll()[0].rv,bioAll()[0].b); o.push('std '+S0.P.length); window.__S=S0; const B=stQtyBook(); o.push(B.sheets.map(s=>s.name).join(',')); o.push(buildFullDXF().length);
+ const c=JSON.parse(JSON.stringify(rvClean())); o.push(JSON.stringify(c.map(x=>x.bios&&x.bios.length)));
+ return o;});
+console.log(r.join('\n'));
+await pg.evaluate(()=>{setViewMode('2D');const f=bioAll()[0];const g=bioGeo(f.rv,f.b);const q=getPointAndNormalAtStation((g.a+g.b)/2);state.cam2D.cx=q.x;state.cam2D.cy=q.y;state.cam2D.scale=40;requestRedraw()});await pg.waitForTimeout(800);
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/bio_p.png',clip:{x:480,y:110,width:1220,height:830}});
+await pg.evaluate(()=>{const f=bioAll()[0];const g=bioGeo(f.rv,f.b);const k=state.sections.findIndex(s=>s.sta>g.a+1&&s.sta<g.b);selectStationIndex(k);setViewMode('CROSS');setCrossDisplayMode('SINGLE')});await pg.waitForTimeout(800);
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/bio_c.png',clip:{x:480,y:150,width:1220,height:750}});
+console.log(errs.join('\n')||'noerr');await b.close();})();

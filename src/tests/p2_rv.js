@@ -1,0 +1,11 @@
+const {chromium}=require('playwright');const fs=require('fs');const ty=process.argv[2]||'bty';
+(async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
+await pg.evaluate(ty=>{rvAdd('L',0,167,ty);rvAdd('R',0,167,ty);},ty);await pg.waitForTimeout(3000);
+const r=await pg.evaluate(()=>{const o=[];state.revs.forEach(rv=>{o.push(rv.type+' '+rv.side+' '+JSON.stringify((rv._q&&rv._q.rows||[]).map(x=>[String(x.it||x[0]).slice(0,12),x.v!==undefined?+(+x.v).toFixed(2):x])).slice(0,600));});
+ o.push(buildFullDXF().length); state.revs.forEach(rv=>{const S=rvStdPrims(rv); o.push('std '+rv.type+' '+(S.P||S).length);}); o.push(JSON.stringify(Object.keys(rvStdPrims(state.revs[0]))));return o;});
+console.log(r.join('\n'));
+await pg.evaluate(()=>{selectStationIndex(8);setViewMode('CROSS');setCrossDisplayMode('SINGLE')});await pg.waitForTimeout(1000);
+await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/rv_'+ty+'.png',clip:{x:480,y:150,width:1220,height:750}});
+console.log(errs.join('\n')||'noerr');await b.close();})();
