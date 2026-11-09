@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const errs=[];
 const pg=await b.newPage({viewport:{width:1600,height:1000}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1000);
 await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
 await pg.evaluate(()=>{rvAdd('L',0,167,'p405');rvAdd('R',0,167,'grav');stAdd(30,'sill');stAdd(70,'sill');stAdd(100,'dam');stAdd(130,'sill');stAdd(150,'sill');});await pg.waitForTimeout(3000);
 await pg.evaluate(()=>{const ty={30:'r0607',70:'e606',130:'a0608',150:'g604'};state.structs.forEach((s,i)=>{if(ty[Math.round(s.sta)]){state.structSel=i;sltSetType(ty[Math.round(s.sta)])}});

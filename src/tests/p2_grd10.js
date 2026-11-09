@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1000);
 await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
 await pg.evaluate(()=>{selectStationIndex(0);grdAdd('cl');switchSideTab('tab-earth',document.querySelector('[data-tab="tab-earth"]'));const sub=[...document.querySelectorAll('button,div')].find(e=>e.textContent.trim()==='整地'&&e.offsetParent);if(sub)sub.click();grdUI();setViewMode('2D');const q=getPointAndNormalAtStation(60);state.cam2D.cx=q.x;state.cam2D.cy=q.y;state.cam2D.scale=6;requestRedraw();});await pg.waitForTimeout(600);
 const scr=async s=>pg.evaluate(s=>{const g=getPointAndNormalAtStation(s),p=worldToScreen2D(g.x,g.y),rc=cadCanvas.getBoundingClientRect();return {x:rc.left+p.x,y:rc.top+p.y}},s);

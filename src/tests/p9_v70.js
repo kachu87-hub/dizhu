@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>{errs.push('dialog '+d.message());d.accept()});
 const fail=m=>errs.push('FAIL '+m);
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1200);
 const d0=await pg.evaluate(()=>({h:state.pf.hScale,v:state.pf.vScale,rows:state.pf.rows.slice(),hi:document.getElementById('pfHScale').value,vi:document.getElementById('pfVScale').value,
   rv:['pfRvTL','pfRvTR','pfRvBL','pfRvBR'].map(id=>document.getElementById(id).checked),ver:document.title}));
 if(d0.h!==500||d0.v!==200||d0.hi!=='500'||d0.vi!=='200')fail('縱斷面預設比例 '+JSON.stringify(d0));

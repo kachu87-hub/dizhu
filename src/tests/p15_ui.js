@@ -3,7 +3,7 @@ const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const errs=[];const fail=m=>errs.push('FAIL '+m);
 for(const [W,H] of [[1920,1080],[1366,768],[1100,700]]){
 const pg=await b.newPage({viewport:{width:W,height:H}});pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());
-await pg.addInitScript(()=>{try{localStorage.setItem('dizhu.demNet',JSON.stringify({on:false}));}catch(e){}});await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.addInitScript(()=>{try{localStorage.setItem('dizhu.demNet',JSON.stringify({on:false}));}catch(e){}});await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1200);
 await pg.evaluate(()=>{try{localStorage.removeItem('tc_v83_dr')}catch(e){}});
 await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/home/claude/u.tcproj','utf8'));await pg.waitForTimeout(2500);
 // U1

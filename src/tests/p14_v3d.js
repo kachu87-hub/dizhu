@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');const fs=require('fs');const OUT='/home/claude/prev/shots/';try{fs.mkdirSync(OUT,{recursive:true});}catch(e){}
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1600,height:950}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
 const fail=m=>errs.push('FAIL '+m);
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1200);
 await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/home/claude/u.tcproj','utf8'));await pg.waitForTimeout(3000);
 const dxf0=await pg.evaluate(()=>buildFullDXF().length);
 await pg.evaluate(()=>setViewMode('3D'));await pg.waitForTimeout(1200);
@@ -49,10 +49,12 @@ if(await pg.evaluate(()=>buildFullDXF().length)!==dxf0)fail('dxf changed');
 // B1／B2：設計後地形與切換
 const dz=await pg.evaluate(()=>{const o={};o.def=V3D.tm;o.des=V3D.mesh.desA?V3D.mesh.desA.cnt:0;o.out=V3D.mesh.terrOut.cnt;o.all=V3D.mesh.terr.cnt;o.leg=document.getElementById('v3dLeg').textContent;
  const m=[];['orig','both','des'].forEach(k=>{v3dSetTm(k);v3dRender();m.push(v3dTerrSet(V3D.mesh).mode)});o.modes=m;
- const D=V3D.mesh.desA,cols=new Set();for(let i=0;i<D.c.length;i+=4)cols.add(D.c[i]+','+D.c[i+1]+','+D.c[i+2]);o.cut=cols.has(V3D_COL.cut.join());o.fill=cols.has(V3D_COL.fill.join());return o;});
+ const D=V3D.mesh.desA,cols=new Set();for(let i=0;i<D.c.length;i+=4)cols.add(D.c[i]+','+D.c[i+1]+','+D.c[i+2]);o.cut=cols.has(V3D_COL.cut.join());o.fill=cols.has(V3D_COL.fill.join());
+ const B=V3D.mesh.desB,cb=new Set();for(let i=0;i<B.c.length;i+=4)cb.add(B.c[i]+','+B.c[i+1]+','+B.c[i+2]);o.cutB=cb.has(V3D_COL.cutB.join());o.fillB=cb.has(V3D_COL.fillB.join());o.lc=D.lcnt;o.nsec=state.sections.length;return o;});
 console.log('design',JSON.stringify(dz));
 if(!(dz.des>1000&&dz.out>0&&dz.out<dz.all))fail('design mesh '+JSON.stringify(dz));
-if(dz.modes.join()!=='orig,both,des')fail('modes '+dz.modes);if(!dz.cut||!dz.fill)fail('cut/fill colour');
+if(dz.modes.join()!=='orig,both,des')fail('modes '+dz.modes);if(dz.cut||dz.fill)fail('v8.6 C1: des should not use soil colours');if(!dz.cutB||!dz.fillB)fail('C3 both cut/fill colour');
+if(!(dz.lc>dz.nsec*40))fail('C2 design grid lines '+dz.lc);
 // A2：護岸外框高程異常的斷面略過並列出
 const bad=await pg.evaluate(()=>{const f=rvGeomSec,s0=state.sections[20].sta;rvGeomSec=function(sec,sd){const g=f(sec,sd);if(g&&Math.abs(sec.sta-s0)<1e-6&&sd==='L'){const G=Object.assign({},g.G,{polys:g.G.polys.map(p=>Object.assign({},p,{pts:p.pts.map((q,i)=>i?q:[q[0],q[1]+500])}))});return Object.assign({},g,{G});}return g;};
  V3D.mesh.oSig='';v3dRender();const r=[V3D.mesh.stat.rvBad.slice(),document.getElementById('v3dStat').textContent.includes('略過')];rvGeomSec=f;V3D.mesh.oSig='';v3dRender();r.push(V3D.mesh.stat.rvBad.length);return r;});

@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1000);
 await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
 await pg.evaluate(()=>{rvAdd('R',0,167,'grav');setViewMode('2D');const q=getPointAndNormalAtStation(90);state.cam2D.cx=q.x;state.cam2D.cy=q.y;state.cam2D.scale=9;document.getElementById('lyrCurveCentipede').checked=true;requestRedraw()});await pg.waitForTimeout(1500);
 await pg.screenshot({path:'/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p2'+'/tick2_edge.png',clip:{x:480,y:110,width:1220,height:830}});

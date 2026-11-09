@@ -1,7 +1,7 @@
 // v6.6 數量來源欄：工程總表（畫面、Excel）與數量明細標示 幾何計算／kg/m³ 估算／計數／地形
 const {chromium}=require('playwright');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1600,height:1000}});pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());const fail=m=>errs.push('FAIL '+m);
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1000);
 await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
 await pg.evaluate(()=>{rvAdd('L',0,167,'grav');stAdd(30,'sill');stAdd(90,'dam');});await pg.waitForTimeout(2500);
 const r=await pg.evaluate(()=>{state.structSel=0;sltSetType('f0605');stRecalc&&stRecalc();rvRecalc();

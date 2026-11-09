@@ -1,7 +1,7 @@
 // v8.0：梳子壩、固床工＋基樁（固床工型式）
 const {chromium}=require('playwright');const fs=require('fs');const OUT='/home/claude/prev/shots/';try{fs.mkdirSync(OUT,{recursive:true});}catch(e){}
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1000);
 await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
 await pg.evaluate(()=>{stAdd(80,'sill');});await pg.waitForTimeout(1500);
 const fail=m=>errs.push('FAIL '+m);

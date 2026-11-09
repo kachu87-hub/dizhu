@@ -8,7 +8,7 @@ await pg.route('https://s3.amazonaws.com/elevation-tiles-prod/terrarium/**',asyn
   const b64=await gen.evaluate(([z,x,y])=>{const c=document.getElementById('c'),g=c.getContext('2d'),im=g.createImageData(256,256);for(let j=0;j<256;j++){const v=500+0.01*(y*256+j+0.5)+32768,R=Math.floor(v/256),G=Math.floor(v%256),B=Math.round((v-Math.floor(v))*256);for(let i=0;i<256;i++){const k=(j*256+i)*4;im.data[k]=R;im.data[k+1]=G;im.data[k+2]=Math.min(255,B);im.data[k+3]=255;}}g.putImageData(im,0,0);return c.toDataURL('image/png').split(',')[1];},[z,x,y]);
   r.fulfill({status:200,body:Buffer.from(b64,'base64'),headers:{'Access-Control-Allow-Origin':'*','Content-Type':'image/png'}});});
 await pg.route('https://wmts.nlsc.gov.tw/**',r=>r.fulfill({status:404,body:'',headers:{'Access-Control-Allow-Origin':'*'}}));
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await W(1200);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await W(1200);
 await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/home/claude/u.tcproj','utf8'));await W(6000);
 // Terrarium 自動取得
 const t1=await pg.evaluate(()=>{const D=state.dzDem;if(!D)return {msg:DNET.msg};const P=dnetLine(),p=P[Math.floor(P.length/2)],E=p[0]+20,N=p[1]+10,z=dzDemZ(E,N);const g=DZ_TM.inv(E,N),r=g.lat*Math.PI/180,Y=(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*256*8192;return {src:D.src,net:D.net,name:D.name,dx:D.dx,z,exp:500+0.01*Y,info:demInfo()};});

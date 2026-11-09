@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1600,height:1000}});pg.on('pageerror',e=>errs.push(e.message));
 let dlg=[];pg.on('dialog',d=>{dlg.push(d.message());d.accept();});const fail=m=>errs.push('FAIL '+m);
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1200);
 await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/home/claude/u.tcproj','utf8'));await pg.waitForTimeout(3000);
 const S=()=>pg.evaluate(()=>({st:state.structs.map(s=>s.sta),rv:state.revs.map(r=>[r.s0,r.s1]),cs:state.customStations.map(c=>c.s),g:state.grades.map(G=>[G.s0,G.s1,G.segs.map(q=>[q.a,q.b])]),vip:state.profile.vips.slice(0,3).map(v=>v.sta),
   cut:document.getElementById('barCutVol').textContent,fill:document.getElementById('barFillVol')?document.getElementById('barFillVol').textContent:'',ss:document.getElementById('startStationVal').value,n:state.sections.length,ext:Object.keys(state.secExt||{}).sort().join(','),sp:Object.keys(state.secParams||{}).sort().join(','),st0:state.alignment.startSta}));

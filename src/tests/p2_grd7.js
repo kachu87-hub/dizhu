@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1000);
 await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
 const r=await pg.evaluate(()=>{const i=state.sections.findIndex(s=>s.sta>=40);selectStationIndex(i);grdAdd('cl');const G=grdSel();grdSet('s1','110');grdSet('P0.zb','-2');grdSet('P1.zb','-2');grdSet('P0.eL','2');grdSet('P1.eL','2');
  const o={};const sum=()=>{const R=grdRes(G);return {Vc:+R.Vc.toFixed(1),Vf:+R.Vf.toFixed(1),n:R.R.length,bench:R.R.map(r=>(r.sides.L?r.sides.L.benches.length:'-')+'/'+(r.sides.R?r.sides.R.benches.length:'-')).join(' '),over:R.R.filter(r=>(r.sides.L&&r.sides.L.clamp)||(r.sides.R&&r.sides.R.clamp)).length,types:[...new Set(R.R.map(r=>r.p.typ.name))]}};

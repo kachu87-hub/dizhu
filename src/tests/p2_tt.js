@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('console',m=>{if(m.type()==='error'&&!/ERR_TUNNEL|Failed to load/.test(m.text()))errs.push('console '+m.text())});pg.on('dialog',d=>d.accept());
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1200);
 await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
 const r=await pg.evaluate(()=>{rvAdd('L',0,80,'grav');rvAdd('R',20,120,'b403');stAdd(100,'dam');stAdd(140,'sill');sltSetType('r0607');
  const i=state.sections.findIndex(s=>s.sta>=40);selectStationIndex(i);bioAdd('L');grdAdd('cl');grdSet('s1','70');rebuildAlignmentAndSections();rvRecalc();

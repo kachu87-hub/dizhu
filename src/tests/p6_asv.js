@@ -1,7 +1,7 @@
 // v6.6 自動存檔與當機復原：修改→備份→關閉→重開提示→還原→手動存檔清除；開著的分頁不算遺留
 const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const dir='/tmp/asv_prof_'+Date.now();const ctx=await chromium.launchPersistentContext(dir,{viewport:{width:1600,height:1000}});const errs=[];const fail=m=>errs.push('FAIL '+m);
-const U='file:///home/claude/tcv4/DiZhu_v8.5.html';
+const U='file:///home/claude/tcv4/DiZhu_v8.6.html';
 const open=async()=>{const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());await pg.goto(U);await pg.waitForTimeout(1500);return pg};
 let A=await open();
 if(!await A.$('#asvBadge'))fail('無自動存檔標示');

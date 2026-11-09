@@ -2,7 +2,7 @@
 const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
 const fail=m=>errs.push('FAIL '+m);
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1200);
 const e0=await pg.evaluate(()=>chkRun().map(x=>x.sev+':'+x.cat));
 if(e0.filter(x=>x.startsWith('err:基本資料')).length!==2)fail('空白專案應有 2 個基本資料錯誤 '+e0);
 if(!/檢核/.test(await pg.textContent('#btnChk')))fail('無檢核按鈕');

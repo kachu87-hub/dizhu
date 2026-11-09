@@ -4,7 +4,7 @@ const {chromium}=require('playwright');const fs=require('fs'),path=require('path
 const fail=m=>errs.push('FAIL '+m);const W=t=>pg.waitForTimeout(t);const DIR=path.join(__dirname,'demtiles_syn');let hits=0;
 await pg.route('https://dem.test/**',r=>{const u=new URL(r.request().url()),f=path.join(DIR,u.pathname.replace(/^\/+/,''));hits++;if(fs.existsSync(f))r.fulfill({status:200,body:fs.readFileSync(f),headers:{'Access-Control-Allow-Origin':'*','Content-Type':f.endsWith('.json')?'application/json':'application/octet-stream'}});else r.fulfill({status:404,body:'nf',headers:{'Access-Control-Allow-Origin':'*'}});});
 await pg.addInitScript(()=>{try{localStorage.setItem('dizhu.demNet',JSON.stringify({base:'https://dem.test/',src:'moi',on:true,R:50}));}catch(e){}});
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await W(1200);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await W(1200);
 await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/home/claude/u.tcproj','utf8'));await W(5000);
 const a=await pg.evaluate(()=>{const D=state.dzDem;if(!D)return null;const P=dnetLine();let far=0,near=0;for(let j=0;j<D.ny;j++)for(let i=0;i<D.nx;i++){const v=D.z[j*D.nx+i];if(!Number.isFinite(v))continue;const d=dnetDist(P,D.x0+i*D.dx,D.y0+j*D.dy);if(d>50+29)far++;else near++;}
   const s=state.sections.find(s=>s.demN>0);const k=s?s.samples.findIndex(q=>q.gsrc==='dem'):-1;let ok=null;if(k>=0){const q=s.samples[k],W=Math.hypot(s.rx-s.lx,s.ry-s.ly),x=s.cx+(s.rx-s.lx)/W*q.offset,y=s.cy+(s.ry-s.ly)/W*q.offset;ok=Math.abs(dzDemZ(x,y)-(600+0.01*(x-242570)+0.02*(y-2686270)));}

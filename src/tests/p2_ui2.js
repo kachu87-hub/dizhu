@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1600,height:1000}});pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1000);
 await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
 await pg.evaluate(()=>{rvAdd('L',0,167,'grav');rvAdd('R',0,167,'grav');stAdd(30,'sill');stAdd(70,'sill');});await pg.waitForTimeout(2500);
 const r=await pg.evaluate(()=>{const o=[];state.structSel=0;sltSetType('cdam');state.structSel=1;sltSetType('f0605');

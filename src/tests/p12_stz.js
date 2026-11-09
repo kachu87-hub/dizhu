@@ -1,7 +1,7 @@
 // v7.6：結構物調高程 S1～S5、T1～T5
 const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());const fail=m=>errs.push('FAIL '+m);
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1200);
 await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/home/claude/u.tcproj','utf8'));await pg.waitForTimeout(3000);
 const snap0=await pg.evaluate(()=>JSON.stringify({s:stClean(),v:state.profile.vips}));
 const types=await pg.evaluate(()=>{const o=[['dam',''],['sub',''],['sill','']];Object.keys(SLT).forEach(k=>{if(k!=='gen')o.push(['sill',k]);});return o;});

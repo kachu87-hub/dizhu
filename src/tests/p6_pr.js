@@ -1,7 +1,7 @@
 // v6.6 參數合理範圍提示：超出範圍→檢核清單警告＋輸入框標黃；改回正常→消失；不阻擋計算
 const {chromium}=require('playwright');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());const fail=m=>errs.push('FAIL '+m);
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1200);
 await pg.evaluate(()=>loadDemoTerrain());await pg.waitForTimeout(800);
 const r0=await pg.evaluate(()=>{stAdd(100,'dam');rvAdd('L',0,80,'grav');state.dnPickType='rect';dnAdd('A');rebuildAlignmentAndSections();return chkRun().filter(x=>x.pr).length});
 if(r0!==0)fail('預設參數不應有範圍警告 '+r0);

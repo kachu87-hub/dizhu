@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1000);
 await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/tmp/claude-0/-home-claude/99069836-f851-593c-92ab-abb13bf9a61c/scratchpad/p3'+'/u.tcproj','utf8'));await pg.waitForTimeout(3000);
 const t0=Date.now();
 await pg.evaluate(()=>{setViewMode('2D');const q=getPointAndNormalAtStation(170);state.cam2D.cx=q.x;state.cam2D.cy=q.y;state.cam2D.scale=5;requestRedraw()});await pg.waitForTimeout(1500);

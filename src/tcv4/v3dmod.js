@@ -245,15 +245,19 @@ function v3dDesign(O) {
   const col = (d, b) => { const t = 0.05; if (d > t) return b ? V3D_COL.cutB : V3D_COL.cut; if (d < -t) return b ? V3D_COL.fillB : V3D_COL.fill; return null; };
   const B = state.bounds, z0 = B.minZ, dz = (B.maxZ - B.minZ) || 1, ter = z => { const r = Math.max(0, Math.min(1, (z - z0) / dz)); return [Math.round(20 + r * 140), Math.round(95 + r * 110), Math.round(135 - r * 65), 255]; };
   const W = secs.map(s => v3dSecW(s, O)), P = secs.map(v3dProf);
-  const tri = (a, b, c) => { const d = (a.d + b.d + c.d) / 3, z = (a.z + b.z + c.z) / 3; v3dTri(MA, a.w, b.w, c.w, col(d) || ter(z)); v3dTri(MB, a.w, b.w, c.w, col(d, true) || ter(z)); };
+  // v8.6 C1：「設計後」不再用土色分挖填，一律用與原地形相同的高程綠（挖方處即顯示挖完後的地面）；C3「兩者」保留紅＝挖、綠＝填
+  const tri = (a, b, c) => { const d = (a.d + b.d + c.d) / 3, z = (a.z + b.z + c.z) / 3; v3dTri(MA, a.w, b.w, c.w, ter(z)); v3dTri(MB, a.w, b.w, c.w, col(d, true) || ter(z)); };
+  const GL = [0, 240, 255, 56];   // v8.6 C2：設計後地面線，與原地形三角網格線同一樣式（跟「三角網格線」一起開關）
   const pt = (i, q) => ({ w: W[i](q.offset, q.desZ), d: (q.groundZ ?? q.desZ) - q.desZ, z: q.desZ });
   secs.forEach((s, i) => { if (!W[i]) return; const S = P[i]; L.push(W[i](S[0].offset, 0)); Rr.push(W[i](S[S.length - 1].offset, 0));
-    for (let k = 0; k + 1 < S.length; k++) v3dLine(MA, W[i](S[k].offset, S[k].desZ), W[i](S[k + 1].offset, S[k + 1].desZ), [0, 240, 255, 70]); });
+    for (let k = 0; k + 1 < S.length; k++) v3dLine(MA, W[i](S[k].offset, S[k].desZ), W[i](S[k + 1].offset, S[k + 1].desZ), GL); });
   for (let i = 0; i + 1 < secs.length; i++) {
     if (!W[i] || !W[i + 1]) continue; const A = P[i], Bq = P[i + 1];
     if (Math.abs(secs[i + 1].sta - secs[i].sta) > 60) continue;   // 斷面間距過大（如主支流分段）不相連
     const lo = Math.max(A[0].offset, Bq[0].offset), hi = Math.min(A[A.length - 1].offset, Bq[Bq.length - 1].offset); if (!(hi > lo)) continue;
     const U = [...new Set([lo, hi, ...A.map(q => q.offset), ...Bq.map(q => q.offset)].filter(o => o >= lo - 1e-9 && o <= hi + 1e-9).map(o => +o.toFixed(4)))].sort((a, b) => a - b);
+    { const g = Math.max(1, Math.min(4, (hi - lo) / 16)), O2 = [lo, hi]; for (let o = Math.ceil(lo / g) * g; o < hi - 1e-6; o += g) if (o > lo + 1e-6) O2.push(o);   // C2 縱向地形線：沿樁號方向連接相鄰斷面同偏距點
+      O2.forEach(o => { const a = v3dAt(A, o), b = v3dAt(Bq, o); v3dLine(MA, W[i](o, a.desZ), W[i + 1](o, b.desZ), GL); }); }
     for (let k = 0; k + 1 < U.length; k++) { const a0 = pt(i, v3dAt(A, U[k])), a1 = pt(i, v3dAt(A, U[k + 1])), b0 = pt(i + 1, v3dAt(Bq, U[k])), b1 = pt(i + 1, v3dAt(Bq, U[k + 1])); tri(a0, a1, b1); tri(a0, b1, b0); }
     [[A, i, i + 1, Bq], [Bq, i + 1, i, A]].forEach(([X, ix, iy, Y]) => {   // 兩側較寬者的外緣：扇形接到另一斷面的端點
       const yl = pt(iy, v3dAt(Y, lo)), yh = pt(iy, v3dAt(Y, hi)), xl = X.filter(q => q.offset < lo - 1e-6).concat([v3dAt(X, lo)]), xh = [v3dAt(X, hi)].concat(X.filter(q => q.offset > hi + 1e-6));
@@ -492,7 +496,7 @@ function v3dInfo() {
   const s = document.getElementById('v3dStat'), a = document.getElementById('v3dAng'), m = V3D.mesh, st = m && m.stat;
   const vb = s && st ? v3dVipBad() : [];
   if (s && st) { const t = `繪圖：${V3D.mode === 'gl' ? 'WebGL（深度緩衝，遮擋正確）' : V3D.mode === 'canvas' ? '簡易繪圖（此電腦無 WebGL）' : '—'}；結構物 ${st.st} 座、基樁 ${st.piles} 支、護岸 ${st.rv} 段${st.rvBad && st.rvBad.length ? `。⚠ 護岸外框高程異常、3D 略過的斷面：${st.rvBad.join('、')}（請到橫斷面檢查）` : ''}${vb.length ? `。⚠ 縱斷面設計點高程疑似輸入錯誤：${vb.map(b => `${formatStation(b.sta)} 設計 ${b.z.toFixed(2)} m、地面約 ${b.g.toFixed(2)} m`).join('；')}（請到「2. 縱斷」修正；該段 3D 先以原地形顯示）` : ''}`; if (s.textContent !== t) s.textContent = t; s.style.color = (st.rvBad && st.rvBad.length) || vb.length ? '#b45309' : ''; }
-  const lg = document.getElementById('v3dLeg'); if (lg) { const hasD = m && m.desA && m.desA.cnt, t = !hasD ? '（尚無橫斷面，只能顯示原地形）' : V3D.tm === 'both' ? '設計後地形：紅＝挖方、綠＝填方；原地面以半透明疊在上面' : V3D.tm === 'des' ? '設計後地形：淺土色＝開挖面、深土色＝回填土；橫斷面範圍外為原地形' : '原地形（三角網）'; if (lg.textContent !== t) lg.textContent = t; }
+  const lg = document.getElementById('v3dLeg'); if (lg) { const hasD = m && m.desA && m.desA.cnt, t = !hasD ? '（尚無橫斷面，只能顯示原地形）' : V3D.tm === 'both' ? '設計後地形：紅＝挖方、綠＝填方；原地面以半透明疊在上面' : V3D.tm === 'des' ? '設計後地形：與原地形同色（依高程），挖方處顯示挖完後的地面；青色線＝設計後地形線（隨「三角網格線」開關）；橫斷面範圍外為原地形' : '原地形（三角網）'; if (lg.textContent !== t) lg.textContent = t; }
   if (a) { const c = state.cam3D, az = ((c.yaw * 180 / Math.PI) % 360 + 360) % 360, t = `目前：看向方位角 ${az.toFixed(0)}°、俯角 ${(c.pitch * 180 / Math.PI).toFixed(0)}°、縮放 ${c.zoom.toFixed(2)} 倍`; if (a.textContent !== t) a.textContent = t; }
 }
 function v3dPanelInit(n) {

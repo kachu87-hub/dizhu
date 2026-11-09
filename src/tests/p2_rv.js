@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');const fs=require('fs');const ty=process.argv[2]||'bty';
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));pg.on('dialog',d=>d.accept());
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1000);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1000);
 await pg.evaluate(()=>{loadDemoTerrain()});await pg.waitForTimeout(800);
 await pg.evaluate(ty=>{rvAdd('L',0,167,ty);rvAdd('R',0,167,ty);},ty);await pg.waitForTimeout(3000);
 const r=await pg.evaluate(()=>{const o=[];state.revs.forEach(rv=>{o.push(rv.type+' '+rv.side+' '+JSON.stringify((rv._q&&rv._q.rows||[]).map(x=>[String(x.it||x[0]).slice(0,12),x.v!==undefined?+(+x.v).toFixed(2):x])).slice(0,600));});

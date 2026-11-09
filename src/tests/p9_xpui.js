@@ -1,7 +1,7 @@
 // v7.1b：自行加樁號區塊位置＋徽章
 const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1700,height:1100}});pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());const fail=m=>errs.push('FAIL '+m);
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.5.html');await pg.waitForTimeout(1200);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1200);
 await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/home/claude/u.tcproj','utf8'));await pg.waitForTimeout(3000);
 const r=await pg.evaluate(()=>{const v=document.getElementById('customStaVal'),card=v.closest('.sec-card');const t=card&&card.querySelector('.sec-title').textContent;const btn=card.querySelector('.sec-title');return {t,in:!!btn,pos:btn?!!(btn.compareDocumentPosition(v)&Node.DOCUMENT_POSITION_FOLLOWING):false,dup:document.querySelectorAll('button[onclick="staPickAdd()"]').length,badge:document.getElementById('ipCountBadge').textContent,tbl:!!card.querySelector('#xpStaTbl')}});
 if(!/中心線定線與圖面加樁工具/.test(r.t)||!r.in||!r.pos||!r.tbl||r.dup!==1)fail('位置 '+JSON.stringify(r));if(!/加樁 1/.test(r.badge))fail('徽章 '+r.badge);
