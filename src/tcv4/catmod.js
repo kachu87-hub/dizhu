@@ -55,21 +55,34 @@ function catFav() { try { return JSON.parse(localStorage.getItem('dz_cat_fav') |
 function catFavSet(a) { try { localStorage.setItem('dz_cat_fav', JSON.stringify(a)); } catch (e) { } }
 function catPrims(it) {   // 縮圖圖元：[{p:[[x,y]...], cl, c}]（y 向上）
   try {
-    if (it.kind === 'st' && it.sty && it.sty !== 'gen') { const st = { type: 'sill', sty: it.sty, sp: {} }, V = sltViews(st); return (V && (V.sect && V.sect.length ? V.sect : V.elev)) || []; }
-    if (it.kind === 'st') { const st = stNorm({ type: it.type }), g = stGeo(st), L = (g._sltLines || g.lines).sect || [], F = (g.fills && g.fills.sect) || []; return F.map(p => ({ p, cl: true, c: '#c2410c' })).concat(L.map(l => ({ p: l.p, cl: false, c: '#475569' }))); }
-    if (it.kind === 'dn') { const S = dnSec(dnNorm({ type: it.type })); return S.polys.map(p => ({ p, cl: true, c: '#0891b2' })); }
-    if (it.kind === 'rv') { const p = Object.assign(tcDefaults(it.type), { e: 0 }); p.T = tcType(it.type); const G = tcType(it.type).geo(p, 0); return (G.polys || []).map(q => ({ p: q.pts, cl: true, c: q.m === 'conc' ? '#475569' : q.m === 'stone' ? '#c2410c' : '#a855f7' })).concat(G.face ? [{ p: G.face, cl: false, c: '#0f172a' }] : []); }
+    if (it.pend) return catPendPrims(it);
+    if (it.kind === 'st' && it.sty && it.sty !== 'gen') { const st = { type: 'sill', sty: it.sty, sp: {} }, V = sltViews(st), pv = CAT_VIEW[it.sty]; if (V && pv && V[pv] && V[pv].length) return V[pv]; return (V && (V.sect && V.sect.length ? V.sect : V.elev)) || []; }
+    if (it.kind === 'st') { const st = stNorm({ type: it.type }), g = stGeo(st), L = (g._sltLines || g.lines).sect || [], F = (g.fills && g.fills.sect) || []; return F.map(p => ({ p, cl: true, c: '#c2410c', f: 'rgba(194,65,12,0.10)' })).concat(L.map(l => ({ p: l.p, cl: false, c: '#475569' }))); }
+    if (it.kind === 'dn') { const S = dnSec(dnNorm({ type: it.type })); return S.polys.map(p => ({ p, cl: true, c: '#0891b2', f: 'rgba(8,145,178,0.10)' })); }
+    if (it.kind === 'rv') { const p = Object.assign(tcDefaults(it.type), { e: 0 }); p.T = tcType(it.type); const G = tcType(it.type).geo(p, 0); return (G.polys || []).map(q => ({ p: q.pts, cl: true, c: q.m === 'conc' ? '#475569' : q.m === 'stone' ? '#c2410c' : '#a855f7', f: q.m === 'conc' ? 'rgba(71,85,105,0.12)' : q.m === 'stone' ? 'rgba(194,65,12,0.14)' : 'rgba(168,85,247,0.12)' })).concat(G.face ? [{ p: G.face, cl: false, c: '#0f172a' }] : []); }
   } catch (e) { console.warn('catPrims', it.id, e); }
   return [];
 }
+// v8.7.1：有原工具圖的型式，縮圖直接取原圖主要視圖（去掉尺寸、文字圖層後裁切）；其餘依型式挑最能辨認的視圖
+const CAT_VIEW = { bcul: 'elev', n1: 'elev', cdam: 'plan', a0608: 'elev', f0605: 'elev', r0607: 'sect', e606: 'sect' };
+function catPendPrims(it) {   // 待建置：依名稱給通用示意（灰線）
+  const n = it.name || '', g = '#94a3b8', f = 'rgba(148,163,184,0.12)', R = (x0, y0, x1, y1) => [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+  if (/擋土牆|擋牆/.test(n)) return [{ p: [[0, 0], [3, 0], [3, 0.6], [1.4, 0.6], [1.2, 4], [0.7, 4], [0.7, 0.6], [0, 0.6]], cl: true, c: g, f }, { p: [[1.4, 0.6], [3.4, 0.6], [3.4, 3.6]], cl: false, c: g }];
+  if (/樁/.test(n)) return [{ p: R(0, 3, 4, 3.6), cl: true, c: g, f }].concat([0.6, 1.6, 2.4, 3.4].map(x => ({ p: R(x - 0.15, 0, x + 0.15, 3), cl: true, c: g, f })));
+  if (/護欄|柵|網/.test(n)) return [{ p: [[0, 0], [5, 0]], cl: false, c: g }].concat([0, 1.25, 2.5, 3.75, 5].map(x => ({ p: [[x, 0], [x, 2.5]], cl: false, c: g })), [0.8, 1.6, 2.4].map(y => ({ p: [[0, y], [5, y]], cl: false, c: g })));
+  if (/溝|槽|渠|涵|管/.test(n)) return [{ p: [[0, 2], [0, 0], [3, 0], [3, 2], [2.6, 2], [2.6, 0.4], [0.4, 0.4], [0.4, 2]], cl: true, c: g, f }];
+  if (/壩|堰|工/.test(n)) return [{ p: [[0, 0], [4, 0], [2.6, 3], [1.9, 3]], cl: true, c: g, f }];
+  return [{ p: R(0, 0, 4, 2), cl: true, c: g, f }, { p: [[0, 0], [4, 2]], cl: false, c: g }];
+}
 function catThumb(it) {
   if (CAT_TH.has(it.id)) return CAT_TH.get(it.id);
+  if (typeof V871_TH !== 'undefined' && V871_TH[it.id]) { CAT_TH.set(it.id, V871_TH[it.id]); return V871_TH[it.id]; }
   let url = ''; const P = catPrims(it).filter(q => q.p && q.p.length >= 2);
   if (P.length) {
     const c = document.createElement('canvas'); c.width = 220; c.height = 120; const g = c.getContext('2d'); g.fillStyle = '#f8fafc'; g.fillRect(0, 0, 220, 120);
     let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; P.forEach(q => q.p.forEach(([x, y]) => { if (!Number.isFinite(x + y)) return; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }));
     const s = Math.min(200 / ((x1 - x0) || 1), 100 / ((y1 - y0) || 1)), ox = 110 - (x0 + x1) / 2 * s, oy = 60 + (y0 + y1) / 2 * s;
-    g.lineWidth = 1; P.forEach(q => { g.beginPath(); q.p.forEach(([x, y], i) => { const X = ox + x * s, Y = oy - y * s; i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); if (q.cl) g.closePath(); g.strokeStyle = /^#f|^#e|^#d|^rgba\((2[0-9]{2}|1[5-9][0-9]),/i.test(q.c || '') ? '#334155' : (q.c || '#334155'); g.stroke(); });
+    g.lineWidth = 1; P.forEach(q => { g.beginPath(); q.p.forEach(([x, y], i) => { const X = ox + x * s, Y = oy - y * s; i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); if (q.cl) { g.closePath(); if (q.f) { g.fillStyle = q.f; g.fill(); } } g.strokeStyle = /^#f|^#e|^#d|^rgba\((2[0-9]{2}|1[5-9][0-9]),/i.test(q.c || '') ? '#334155' : (q.c || '#334155'); g.stroke(); });
     try { url = c.toDataURL('image/png'); } catch (e) { url = ''; }
   }
   CAT_TH.set(it.id, url); return url;
@@ -84,9 +97,9 @@ function catRender() {
   const d = document.getElementById('catDlg'); if (!d || !CAT) return;
   const fav = catFav(), q = CAT.q.trim().toLowerCase(), sel = state.structs[state.structSel];
   const L = catItems().filter(it => !q || [it.name, it.sub, it.alias || '', ...(it.mat || [])].join(' ').toLowerCase().includes(q)).filter(it => CAT.mode !== 'swap' || it.kind === 'st');
-  const card = it => { const on = fav.includes(it.id), ck = CAT.cmp.includes(it.id), th = it.pend ? '' : catThumb(it), cur = CAT.mode === 'swap' && sel && it.kind === 'st' && it.type === sel.type && (sel.type !== 'sill' || it.sty === (sel.sty || 'gen'));
+  const card = it => { const on = fav.includes(it.id), ck = CAT.cmp.includes(it.id), th = catThumb(it), cur = CAT.mode === 'swap' && sel && it.kind === 'st' && it.type === sel.type && (sel.type !== 'sill' || it.sty === (sel.sty || 'gen'));
     return `<div style="border:1px solid ${cur ? '#c2410c' : '#cbd5e1'};border-radius:8px;background:#fff;padding:6px;display:flex;flex-direction:column;gap:4px;${it.pend ? 'opacity:.55;' : ''}">
-      <div style="height:96px;border-radius:5px;background:#f8fafc;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${it.pend ? 'default' : 'pointer'};" ${it.pend ? '' : `onclick="catPick('${it.id}')"`}>${th ? `<img src="${th}" style="max-width:100%;max-height:96px;">` : `<span style="font-size:11px;color:#94a3b8;">${it.pend ? '待建置' : '（無縮圖）'}</span>`}</div>
+      <div style="height:96px;border-radius:5px;background:#f8fafc;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${it.pend ? 'default' : 'pointer'};" ${it.pend ? '' : `onclick="catPick('${it.id}')"`}>${th ? `<div style="position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%;"><img src="${th}" style="max-width:100%;max-height:96px;">${it.pend ? '<span style="position:absolute;right:4px;bottom:3px;font-size:10px;color:#64748b;background:rgba(248,250,252,.9);padding:0 4px;border-radius:4px;">待建置（通用示意）</span>' : ''}</div>` : `<span style="font-size:11px;color:#94a3b8;">${it.pend ? '待建置' : '（無縮圖）'}</span>`}</div>
       <div style="display:flex;justify-content:space-between;gap:4px;align-items:flex-start;"><div style="font-size:12.5px;font-weight:700;color:#0f172a;line-height:1.3;">${escAttr(it.name)}${it.sub ? `<div style="font-size:10.5px;font-weight:400;color:#64748b;">${escAttr(it.sub)}</div>` : ''}</div>
         ${it.pend ? '' : `<span title="加星號置頂" style="cursor:pointer;font-size:15px;color:${on ? '#f59e0b' : '#cbd5e1'};" onclick="catStar('${it.id}')">★</span>`}</div>
       <div style="display:flex;gap:3px;flex-wrap:wrap;">${(it.mat || []).map(m => `<span style="font-size:10px;padding:1px 6px;border-radius:9px;background:#e0f2fe;color:#075985;">${escAttr(m)}</span>`).join('')}</div>

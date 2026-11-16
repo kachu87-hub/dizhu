@@ -3,11 +3,11 @@ const {chromium}=require('playwright');const fs=require('fs');
 (async()=>{const b=await chromium.launch();const errs=[];const pg=await b.newPage({viewport:{width:1600,height:1000}});pg.on('pageerror',e=>errs.push(e.message));pg.on('dialog',d=>d.accept());
 const fail=m=>errs.push('FAIL '+m);
 await pg.addInitScript(()=>{try{localStorage.setItem('dizhu.demNet',JSON.stringify({on:false}));localStorage.removeItem('tc_v86');}catch(e){}});
-await pg.goto('file:///home/claude/tcv4/DiZhu_v8.6.html');await pg.waitForTimeout(1500);
+await pg.goto('file:///home/claude/tcv4/DiZhu_v8.7.1.html');await pg.waitForTimeout(1500);
 await pg.evaluate(t=>{applyProject(JSON.parse(t),'u.tcproj')},fs.readFileSync('/home/claude/u.tcproj','utf8'));await pg.waitForTimeout(3000);
 const dxf0=await pg.evaluate(()=>buildFullDXF().length);
-// U3
-const u3=await pg.evaluate(()=>{const b=document.getElementById('v86PlanBar');const r=b.getBoundingClientRect();const o={vis:b.offsetParent!==null,h:r.height,has:['toolPan','toolDrawAxis','toolInsIP','toolExtEP','toolAddSta','toolAddStruct','toolAddRev','ipxRow','toolAddPt','toolFlip'].filter(id=>!b.contains(document.getElementById(id))),ph:!!document.querySelector('#planToolsGroup #v86PlanPh')};
+// U3（v8.7.1 起補高程點、翻網格移回左側平面工具，不在工具列）
+const u3=await pg.evaluate(()=>{const b=document.getElementById('v86PlanBar');const r=b.getBoundingClientRect();const o={vis:b.offsetParent!==null,h:r.height,has:['toolPan','toolDrawAxis','toolInsIP','toolExtEP','toolAddSta','toolAddStruct','toolAddRev','ipxRow'].filter(id=>!b.contains(document.getElementById(id))),ph:!!document.querySelector('#planToolsGroup #v86PlanPh')};
  setViewMode('CROSS');o.hid=b.offsetParent===null;setViewMode('2D');o.back=b.offsetParent!==null;return o;});
 if(!u3.vis||u3.h>42||u3.has.length||!u3.ph||!u3.hid||!u3.back)fail('U3 '+JSON.stringify(u3));
 await pg.click('#toolDrawAxis');const t1=await pg.evaluate(()=>state.activeTool);await pg.click('#toolPan');const t2=await pg.evaluate(()=>state.activeTool);
